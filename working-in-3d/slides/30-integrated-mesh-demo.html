@@ -1,0 +1,43 @@
+<h2>Integrated Mesh Layer</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">// create the integrated mesh layer
+var layer = new IntegratedMeshLayer({
+  url: "http://tiles.arcgis.com/tiles/.../Oxford_Scene/..."
+});
+
+// create a map with the layer added
+var map = new Map({
+  basemap: "streets",
+  layers: [layer],
+  ground: "world-elevation"
+});
+
+// finally, create a view with a good
+// perspective on the integrated mesh
+var view = new SceneView({
+  container: "viewDiv",
+  map: map,
+  camera: {
+    position: [-1.2567, 51.7517, 123.6058],
+    heading: 41.4698,
+    tilt: 75.9609
+  }
+});
+</code></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/integrated-mesh.html" ></iframe>
+  </div>
+</div>
+
+
+<aside class="notes">
+- one single textured mesh and level of detail </br>
+- data source: drone to map and vricon data
+</aside>

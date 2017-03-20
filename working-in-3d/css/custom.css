@@ -1,0 +1,306 @@
+/* custom styles can go here */
+
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+
+body {
+	background-image: url("../images/overlay_light_030.png"), linear-gradient(10deg, #37e8f5 0%, #0085cc 60%);
+	background-size: cover;
+}
+
+html.title-slide body {
+	background-image: url("../images/frontpage.2.png");
+	background-size: cover;
+}
+
+.reveal {
+	font-family: "Lato", sans-serif;
+  font-size: 24px;
+  font-weight: normal;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6,
+.reveal p
+.reveal li {
+	color: white;
+	font-family: "Lato", sans-serif;
+	text-transform: none;
+}
+
+.reveal.fade.ready {
+	color: white;
+	font-family: "Lato", sans-serif;
+	text-transform: none;
+}
+
+.reveal h1 {
+	margin:auto;
+  font-size: 2.5em;
+}
+
+.reveal h2 {
+  font-size: 2.0em;
+}
+
+.reveal h3 {
+  font-size: 1em;
+
+}
+
+.reveal h4 {
+  font-size: 1em;
+}
+
+.reveal a {
+	color: #1a45c1;
+	text-decoration: underline;
+	font-style: italic;
+	font-weight: 600;
+}
+
+.reveal a:hover {
+	color: #3656b0;
+}
+
+.reveal ul {
+	font-size: 1.5em;
+}
+
+.reveal ul ul {
+	font-size: 1.0em;
+}
+
+/* Title, subtitle and end slides
+***************************************************************/
+
+.reveal img.esri-logo {
+	background-color: rgba(0,0,0,0);
+	border: none;
+	box-shadow: none;
+
+	width: 12em;
+
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	margin: 0px;
+	padding: 0px;
+}
+
+.reveal div.devsummit-title {
+	width: 18em;
+
+	position: fixed;
+	top: 25px;
+	left: 30px;
+
+	text-align: left;
+	font-weight: 900;
+}
+
+.reveal img.esri-logo-center {
+	background-color: rgba(0,0,0,0);
+	border: none;
+	box-shadow: none;
+
+	margin-top: 19%;
+	max-width: 50%;
+}
+
+.reveal h1.esri-title-slide {
+	max-width: 80%;
+	margin-top: 12%;
+}
+
+.reveal h2.esri-title-slide {
+	margin-top: 0.5em;
+}
+
+.reveal img.esri-banner {
+	border: none;
+	box-shadow: none;
+
+	width: 70%;
+	position: fixed;
+	right: -30px;
+	bottom: -32px;
+	background-color: rgba(0,0,0,0);
+
+	z-index: -1;
+}
+
+.reveal h1.esri-centered-title {
+	margin-top: 320px;
+}
+
+/* Code samples
+***************************************************************/
+
+.reveal iframe {
+	float: right;
+  overflow:hidden;
+	background-color: rgba(255,255,255,0.5);
+}
+
+html.quality-profile .reveal iframe{
+	margin-top: 1%;
+	background-color: rgba(0,0,0,0);
+}
+
+div.two-columns {
+	margin-top: 2em;
+	display: flex;
+	width: 100%;
+	margin: auto;
+	margin-top: 3%;
+}
+
+html.quality-profile div.two-columns {
+	margin-top: 1%;
+}
+
+div.right-column {
+	display: flex;
+	flex-grow: 1;
+	text-align: center;
+}
+
+div.right-column span {
+	margin: auto;
+}
+
+div.left-column {
+	width: 40%;
+	margin-right: 20px;
+
+	position: relative;
+	background-color: rgba(0,0,0, 0.0);
+}
+
+.reveal iframe {
+  overflow:hidden;
+	background-color: rgba(0,0,0, 0.3);
+	border: none;
+	width: 100%;
+	max-width: 100%;
+	min-height: 580px;
+}
+
+.reveal div.code-snippet {
+	background-color: rgba(0,0,0, 0.6);
+	position: relative;
+
+	width: 100%;
+	float: right;
+
+	margin: 0px;
+	padding: 0px;
+}
+
+.reveal div.code-snippet:not(:first-child) {
+	margin-top: 10px;
+}
+
+.reveal div.code-output {
+	background-color: rgba(0,0,0, 0.4);
+	position: relative;
+
+	width: 100%;
+	float: right;
+
+	margin: 0px;
+	padding: 0px;
+
+	min-height: 1.4em;
+
+	overflow: hidden;
+
+	margin-top: 0px;
+}
+
+.reveal img.code-image {
+	max-height: 116px;
+	border: none;
+	margin: 0;
+	margin-top: 10px;
+}
+
+button.play {
+	width: 24px;
+	height: 24px;
+
+	border: none;
+	outline:none;
+
+	position: absolute;
+	top: 5px;
+	right: 5px;
+
+	cursor: pointer;
+
+	background-color: rgba(0,0,0,0);
+	background-image: url("../images/play_64_50.png");
+	background-size: 24px;
+	background-repeat: no-repeat;
+
+	z-index: 10;
+}
+
+button.play:hover {
+	background-image: url("../images/play_64.png");
+}
+
+.reveal pre {
+	margin: 0;
+	padding: 0;
+	box-shadow: none;
+	max-width: 100%;
+	width: 100%;
+	margin: 8px;
+}
+
+.reveal pre code {
+	background-color: rgba(0,0,0,0);
+	max-width: 100%;
+	color: white;
+	font-size: 1.1em;
+	padding: 2;
+	line-height: 1.3em;
+	max-height: 600px;
+}
+
+span.hljs-number {
+	color: #61e5eb;
+}
+
+span.hljs-string {
+	color: #e59f9f;
+}
+
+.reveal ul.root-ul li {
+	padding-top: 6px;
+}
+
+.reveal .first-lvl-li {
+	padding-top: 15px;
+}
+
+.reveal ul code {
+	color: white;
+	font-weight: 400;
+	border: 2px solid rgba(200, 200, 200, 1);
+	border-radius: 4px;
+	padding-left: 6px;
+	padding-right: 6px;
+
+	background-color: rgba(200, 200, 200, 0.2);
+
+	margin-left: 4px;
+	margin-right: 4px;
+	line-height: 60px;
+}
+

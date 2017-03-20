@@ -1,0 +1,16 @@
+{
+  "name": "extending-3d-engine",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "tsc": "tsc",
+    "watch": "tsc -w"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/gl-matrix": "^2.2.34",
+    "@types/three": "^0.83.4",
+    "typescript": "^2.2.1"
+  }
+}

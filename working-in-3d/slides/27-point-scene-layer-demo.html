@@ -1,0 +1,26 @@
+<h2>Point Scene Layer</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">// all the typical initialization
+var map = new Map(...);
+var view = new SceneView(...);
+
+// Create SceneLayer and add to the map
+var sceneLayer = new SceneLayer({
+   url: "http://tiles.arcgis.com/.../Airports_PointSceneLayer/...",
+});
+
+map.add(sceneLayer);
+</code></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/scene-layer-points.html" ></iframe>
+  </div>
+</div>
+
+

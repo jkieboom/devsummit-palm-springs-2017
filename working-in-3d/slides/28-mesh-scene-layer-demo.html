@@ -1,0 +1,26 @@
+<h2>Mesh Scene Layer</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">// all the typical initialization
+var map = new Map(...);
+var view = new SceneView(...);
+
+// Create SceneLayer and add to the map
+var sceneLayer = new SceneLayer({
+  url: "https://tiles.arcgis.com/tiles/.../NYCatt/SceneServer",
+});
+
+map.add(sceneLayer);
+</code></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/scene-layer-mesh.html" ></iframe>
+  </div>
+</div>
+
+

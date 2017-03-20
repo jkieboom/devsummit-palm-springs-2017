@@ -1,0 +1,53 @@
+<h2>Elevation Layers</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">var map = new Map({
+  basemap: "satellite",
+  ground: "world-elevation" // use default world elevation layer
+});
+
+// load an additional elevation layer depicting the
+// elevation difference after the 2014 Oso landslide
+var elevationLayer = new ElevationLayer({
+  url: "https://.../OsoLandslide_After_3DTerrain/ImageServer",
+  visible: false
+});
+
+map.ground.layers.add(elevationLayer);
+
+var view = new SceneView(...);
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="elevation-layers-button01"></button>
+<pre><code class="lang-js">// toggle the elevation layer visiblity
+elevationLayer.visible = !elevationLayer.visible
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<pre><code class="lang-js">// query elevation at the clicked map point
+view.on("click", function(event) {
+  var position = event.mapPoint;
+  var query = elevationLayer.queryElevation(position);
+  query.then((result) => {
+    console.log(result.geometry.z)
+  });
+});
+</code></pre>
+</div>
+<div class="code-output">
+  <pre id="elevation-layer-output01"></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/elevation-layers.html" ></iframe>
+  </div>
+</div>
+
+

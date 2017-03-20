@@ -1,0 +1,47 @@
+<h2>Point Cloud Layer</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">// all the typical initialization
+var map = new Map(...);
+var view = new SceneView(...);
+
+// create Point Cloud Layer
+var pcLayer = new PointCloudLayer({
+  url: "http://tiles.arcgis.com/.../BARNEGAT_BAY_LiDAR_UTM/..."
+});
+
+map.add(pcLayer);
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<pre><code class="lang-js">// update the render settings
+function updateRenderer(pointSize, density) {
+  pcLayer.renderer = new PointCloudRGBRenderer({
+    field: "RGB",
+    pointSizeAlgorithm: {
+      type: "fixed-size",
+      useRealWorldSymbolSizes: false,
+      size: pSize
+    },
+    pointsPerInch: density
+  })
+}
+</code></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/pointcloud-size-and-density.html" ></iframe>
+  </div>
+</div>
+
+<aside class="notes">
+- really large data </br>
+- captures fine detail </br>
+- level of detail </br>
+- example, usecase: for classification </br>
+</aside>

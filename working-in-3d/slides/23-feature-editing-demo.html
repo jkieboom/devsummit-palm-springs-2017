@@ -1,0 +1,60 @@
+<h2>Feature Editing</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">// all the typical initialization
+var map = new Map(...);
+var view = new SceneView(...);
+
+//add an editable featurelayer from portal
+Layer.fromPortalItem({
+  portalItem: {
+    id: "511b97fc0d364367b127f8ba5c89ad13"
+  }
+}).then((featureLayer) => { map.add(featureLayer); })
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="feature-editing-button02"></button>
+<pre><code class="lang-js">// move camera
+var point = new Point({
+  latitude: 33.82595255365376,
+  longitude: -116.5380549055525
+});
+
+view.goTo(point);
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="feature-editing-button01"></button>
+<pre><code class="lang-js">// add feature from code
+var graphic = new Graphic({
+  geometry: point,
+  attributes: {
+    "Incident_Desc": "Devsummit!",
+    "Incident_Address": "hello@world.com"
+  }
+});
+
+featureLayer.applyEdits({
+  addFeatures: [graphic],
+});
+</code></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/feature-editing.html" ></iframe>
+  </div>
+</div>
+
+
+<aside class="notes">
+- new in 4.3
+- api functionality is here
+- interaction tools and widgets will follow in future releases
+</aside>

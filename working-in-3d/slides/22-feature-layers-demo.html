@@ -1,0 +1,39 @@
+<h2>Feature Layers and Elevation Info</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">// all the typical initialization
+var map = new Map(...);
+var view = new SceneView(...);
+
+// Create FeatureLayer, set the elevation mode and add to the map
+var layer = new FeatureLayer({
+  url: "https://services.arcgis.com/.../USA_Major_Cities/...",
+  definitionExpression: "POP2007 > 50000",
+  elevationInfo: {
+    mode: "relative-to-ground",
+    offset: 10000
+  }
+});
+map.add(layer);
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<pre><code class="lang-js">// update elevation mode and offset
+layer.elevationInfo = {
+  mode: "relative-to-ground",
+  offset: 100 // meters
+};
+</code></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/feature-layers-elevation-mode.html" ></iframe>
+  </div>
+</div>
+
+

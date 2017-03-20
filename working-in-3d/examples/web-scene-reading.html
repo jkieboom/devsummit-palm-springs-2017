@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+
+  <title>[Devsummit 2017 Example - WebScene reading]</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    .slides {
+      position: absolute;
+      background-color: black;
+      bottom: 16px;
+      height: 150px;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      overflow-x: scroll;
+    }
+
+    .slides div {
+      min-width: 183px;
+      min-height: 100px;
+      background-size: cover;
+      margin: 6px 6px 6px 6px;
+      border: 1px solid white;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding-bottom: 12px;
+      color: white;
+      text-shadow: 0 0 2px black;
+      font-weight: bold;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.3/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.3/"></script>
+
+  <!--<link rel="stylesheet" href="../../../arcgis-js-api-4/esri/css/main.css">-->
+  <!--<script src="../../../arcgis-js-api-4/dojo/dojo.js"></script>-->
+
+  <script>
+    var view;
+
+    require([
+      "esri/WebScene",
+      "esri/views/SceneView",
+      "esri/widgets/LayerList",
+      "esri/widgets/Expand",
+      "dojo/domReady!"
+    ], function(WebScene, SceneView, LayerList, Expand) {
+
+      view = new SceneView({
+        container: "viewDiv",
+
+        map: new WebScene({
+          portalItem: {
+            id: "3a9976baef9240ab8645ee25c7e9c096"
+          }
+        }),
+
+        qualityProfile: "high",
+
+        ui: {
+          components: ["attribution", "compass"]
+        }
+      });
+
+      var layerList = new LayerList({
+        view: view,
+        container: document.createElement("div")
+      });
+
+      var layerListExpand = new Expand({
+        view: view,
+        content: layerList.domNode,
+        expandIconClass: "esri-icon-visible",
+        expanded: true
+      });
+
+      view.ui.add(layerListExpand, "top-right");
+
+      view.map.then(() => {
+        createSlides();
+      });
+
+      function createSlides() {
+        const slidesDiv = document.createElement("div");
+        slidesDiv.classList.add("slides");
+
+        const scene = view.map;
+
+        scene.then(() => {
+          for (const slide of scene.presentation.slides.toArray()) {
+            const slideDiv = document.createElement("div");
+            slideDiv.style.backgroundImage = `url("${slide.thumbnail.url}")`;
+
+            slideDiv.textContent = slide.title.text;
+
+            slideDiv.addEventListener("click", () => {
+              slide.applyTo(view);
+            });
+
+            slidesDiv.appendChild(slideDiv);
+          }
+        });
+
+        view.container.appendChild(slidesDiv);
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>

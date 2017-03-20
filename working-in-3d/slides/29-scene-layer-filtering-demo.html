@@ -1,0 +1,54 @@
+<h2>Scene Layer Filtering</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">// all the typical initialization
+var map = new Map(...);
+var view = new SceneView(...);
+
+// Create SceneLayer and add to the map
+var sceneLayer = new SceneLayer({
+  url: "https://tiles.arcgis.com/tiles/.../NYCatt/SceneServer",
+});
+
+map.add(sceneLayer);
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="mesh-filtering-button01"></button>
+<pre><code class="lang-js">// only show buildings constructed before 1900
+sceneLayer.definitionExpression =
+  "CNSTRCT_YR < 1900 AND CNSTRCT_YR > 0";
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="mesh-filtering-button03"></button>
+<pre><code class="lang-js">// reset filter
+sceneLayer.definitionExpression = null;
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="mesh-filtering-button02"></button>
+<pre><code class="lang-js">// filter out tall buildings
+sceneLayer.definitionExpression =
+  "HEIGHTROOF < 100 AND HEIGHTROOF > 0";
+</code></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/scene-layer-mesh.html" ></iframe>
+  </div>
+</div>
+
+
+<aside class="notes">
+- filtering, same defintionExpression as on the feature layer </br>
+- client side filtering </br>
+- SQL </br>
+</aside>

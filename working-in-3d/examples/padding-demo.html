@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+
+  <title>[Devsummit 2017 Example - Camera]</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      font-family: "Avenir Next";
+    }
+
+    #overlayTop {
+      position: absolute;
+      display: none;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 50px;
+      background-color: rgba(0, 0, 0, 0.8);
+      font-size: 2em;
+      font-weight: bold;
+      color: white;
+      padding-left: 12px;
+    }
+
+    #overlayLeft {
+      position: absolute;
+      display: none;
+      width: 250px;
+      left: 0;
+      top: 50px;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      box-sizing: border-box;
+    }
+
+    #overviewDiv {
+      width: 220px;
+      height: 130px;
+      border: 1px solid white;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.3/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.3/"></script>
+
+  <!--<link rel="stylesheet" href="../../../arcgis-js-api-4/esri/css/main.css">-->
+  <!--<script src="../../../arcgis-js-api-4/dojo/dojo.js"></script>-->
+
+  <script>
+    var view;
+
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/views/MapView",
+      "esri/layers/MapImageLayer",
+      "dojo/domReady!"
+    ], function(Map, SceneView, MapView, MapImageLayer) {
+
+      view = new SceneView({
+        container: "viewDiv",
+
+        map: new Map({
+          basemap: "hybrid",
+          ground: "world-elevation"
+        }),
+
+        camera: {
+          position: {
+            x: 8.062,
+            y: 46.042,
+            z: 14813.5
+          },
+          heading: 0,
+          tilt: 72
+        },
+        
+        ui: {
+          components: ["attribution", "compass"]
+        },
+
+        environment: {
+          atmosphere: {
+            quality: "high"
+          }
+        },
+
+        qualityProfile: "high"
+      });
+
+      overview = new MapView({
+        map: new Map({
+          basemap: "streets-night-vector"
+        }),
+        extent: view.extent,
+        container: "overviewDiv",
+        constraints: {
+          snapToZoom: false
+        },
+        ui: {
+          components: []
+        }
+      });
+      
+      window.updatePadding = () => {
+        view.padding = {
+          top: 50,
+          left: 250
+        };
+
+        document.getElementById("overlayLeft").style.display = "block";
+        document.getElementById("overlayTop").style.display = "block";
+
+        overview.extent = view.extent;
+      };
+
+      // presentation specific
+      view.then(() => {
+        if (window.parent) {
+          var button01 = window.parent.document.getElementById("scene-view-padding-button01")
+
+          if (button01) {
+            button01.onclick = window.updatePadding;
+          }
+
+          window.parent.demo = window;
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="overlayTop">
+    Padding area
+  </div>
+  <div id="overlayLeft">
+    <div id="overviewDiv"></div>
+  </div>
+</body>
+</html>

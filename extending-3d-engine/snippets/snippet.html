@@ -1,0 +1,62 @@
+<html>
+
+<head>
+  <title>Snippet</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.3/esri/css/main.css" />
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.js"></script>
+
+  <script src="./lib/threejs/loaders/collada/Animation.js"></script>
+  <script src="./lib/threejs/loaders/collada/AnimationHandler.js"></script>
+  <script src="./lib/threejs/loaders/collada/KeyFrameAnimation.js"></script>
+  <script src="./lib/threejs/loaders/ColladaLoader.js"></script>
+
+  <script>
+    var queryParts = document.location.search.slice(1).split("&");
+    var snippetName = queryParts[0];
+    var params = {};
+
+    for (var i = 1; i < queryParts.length; i++) {
+      var keyval = queryParts[i].split("=");
+      params[keyval[0]] = keyval[1];
+    }
+
+    var baseUrl = "https://js.arcgis.com/4.3";
+
+    var apiUrl = baseUrl + "/init.js";
+    var script = document.createElement("script");
+    script.src = apiUrl;
+
+    script.onload = function() {
+      require({
+        baseUrl: baseUrl + "/dojo/",
+        packages: [{
+          name: "app",
+          location: document.location.pathname.replace(/snippet\.html$/, "") + "/"
+        }]
+      }, ["app/" + snippetName, "dojo/domReady!"], function(snippet) {
+        if (params["console"] !== "no") {
+          document.getElementById("viewLog").style.display = "";
+        }
+
+        snippet.initialize();
+
+        window.addEventListener("message", function(m) {
+          if (m.data && m.data.play) {
+            snippet.play();
+          }
+        }, false);
+      });
+    };
+
+    document.head.appendChild(script);
+  </script>
+</head>
+<body>
+  <div id="viewDiv">
+    <div id="viewLog" class="text-on-view" style="display: none"></div>
+  </div>
+</body>
+</html>

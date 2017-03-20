@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Controlling the Camera &amp; 3D Navigation in your ArcGIS API for JavaScript app</title>
+
+    <meta name="description" content="Learn about how to navigate around the globe in 3D with the ArcGIS API 4.x for JavaScript. This session will go over some practical examples of camera manipulation and programmatic navigation taking advantage of the latest version of the API. You will also learn how to use the new input API to implement your own customized navigation.">
+    <meta name="author" content="Jesse van den Kieboom">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.1/css/reveal.css">
+    <link rel="stylesheet" href="./themes/esri-dev-summit-2017.css" id="theme">
+    <link rel="shortcut icon" href="./images/favicon.ico">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.1/lib/css/zenburn.min.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.1/css/print/pdf.min.css' : 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.1/css/print/paper.min.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+  </head>
+
+  <body>
+
+    <div class="reveal">
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section data-markdown="./presentation.md"></section>
+
+<!--         <section data-background="img/bg-4.png">
+          <script type="text/template">
+          </script>
+        </section>
+
+        <section data-background="img/bg-2.png">
+        </section>
+
+        <section data-background="img/bg-6.png">
+        </section>
+
+        <section style="text-align: left;" data-background="img/end.png">
+          <h1>THE END</h1>
+        </section> -->
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.1/lib/js/head.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.1/js/reveal.min.js"></script>
+
+    <script>
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      window.Reveal.initialize({
+        //controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        controls: false,
+
+        width: 1366,
+        height: 768,
+
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.1/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.1/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.1/plugin/markdown/markdown.min.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.1/plugin/highlight/highlight.min.js', async: true, callback: function() { window.hljs.initHighlightingOnLoad(); } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.1/plugin/zoom-js/zoom.min.js', async: true },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.1/plugin/notes/notes.min.js', async: true }
+        ]
+      });
+
+      window.Reveal.addEventListener('ready', function(event) {
+        addEventListener("message", function(event) {
+          if (event.data && event.data.type === "fullscreen") {
+            if (document.webkitCurrentFullScreenElement) {
+              document.webkitExitFullscreen();
+              return
+            }
+
+            var iframes = document.querySelectorAll("iframe");
+
+            for (var i = 0; i < iframes.length; i++) {
+              var iframe = iframes[i];
+
+              if (iframe.contentWindow === event.source) {
+                iframe.webkitRequestFullscreen();
+                return;
+              }
+            }
+          }
+        });
+
+        var playButtons = document.querySelectorAll('[data-play-frame]');
+
+        for (var i = 0; i < playButtons.length; i++) {
+          playButtons[i].addEventListener('click', (function(frameName, argument) {
+            return function(event) {
+              event.stopPropagation();
+              event.preventDefault();
+
+              window.frames[frameName].contentWindow.postMessage({ play: true, argument: argument }, '*');
+            };
+          })(playButtons[i].getAttribute('data-play-frame'), playButtons[i].getAttribute("data-play-argument")));
+
+          playButtons[i].addEventListener('mousedown', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+          });
+        }
+      });
+    </script>
+
+  </body>
+</html>

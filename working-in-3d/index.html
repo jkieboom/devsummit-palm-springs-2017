@@ -1,0 +1,1085 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Working in 3D in the ArcGIS API for JavaScript</title>
+
+    <meta name="description" content="Discover the 3D capabilities of the ArcGIS API 4.x for JavaScript. Learn how you can leverage the WebGL capabilities of your browser with the JavaScript API to build stunning 3D web applications. This session will focus on the fundamental 3D building blocks of the API: SceneView, 2D and 3D layers, terrain, and symbology.">
+    <meta name="author" content="Adrian Blumer, Jesse van den Kieboom">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/solarized.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="css/highlight/styles/zenburn.css" id="highlight-theme">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <link rel="stylesheet" href="css/custom.css"><link rel="stylesheet" href="css/esri-dev-summit-2017.css">
+
+  </head>
+
+  <body>
+
+    <div class="reveal">
+      <div class="slides"><section id="working-in-3d" class="slide" data-state="title-slide" data-has-notes="false">
+<p></br></br></br></br></br></br></p>
+<p><span style="font-size: 2.8em">Working in 3D in the ArcGIS API for JavaScript</span></p>
+<p></br>
+</br>
+Jesse van den Kieboom, ESRI R&amp;D Center Zürich</p>
+<p>Adrian Blumer, ESRI R&amp;D Center Zürich</p>
+<p><img class="esri-logo" src="images/esri_logo_01.png"></p>
+<div class="devsummit-title" > Esri Developer Summit</br>Palm Springs, CA | March 2017</div>
+</section>
+
+<section id="important-notice" class="slide" data-has-notes="false">
+<h1>Important notice</h1><p>These slides contain dynamic code snippets that can be viewed online. See <a href="https://jkieboom.github.io/presentations-devsummit-2017/working-in-3d">https://arcgis.github.io/presentations-devsummit-2017/working-in-3d</a>.</p>
+</section>
+
+<section id="scene-view-title" class="slide" data-background="images/section.png" data-has-notes="false">
+<h1 class="esri-centered-title"><a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-views-SceneView.html"><code>SceneView</code></a></h1>
+</section>
+
+<section id="scene-view" class="slide" data-has-notes="false">
+<h2>Working with the SceneView</h2><p>Start with a 2D map/view, replace <strong><a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-views-MapView.html"><code>MapView</code></a></strong> with <a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-views-SceneView.html"><code>SceneView</code></a></p>
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">view = new MapView({
+  container: &quot;viewDiv&quot;,
+
+  map: new Map({
+    basemap: &quot;streets&quot;,
+
+    layers: [new FeatureLayer(
+      &quot;...USA_Census_Free_and_Clear_Housing/MapServer&quot;
+    )]
+  })
+});
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="scene-view-map-view-button01"></button>
+<pre><code class="lang-js">view = new SceneView({
+  container: &quot;viewDiv&quot;,
+
+  map: new Map({
+    basemap: &quot;streets&quot;,
+
+    layers: [new FeatureLayer(
+      &quot;...USA_Census_Free_and_Clear_Housing/MapServer&quot;
+    )]
+  })
+});
+</code></pre>
+</div>
+
+
+<p>  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/scene-view-map-view.html" ></iframe>
+  </div>
+</div></p>
+</section>
+
+<section id="scene-view-explanation" class="slide" data-has-notes="false">
+<h2>Working with the <a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-views-SceneView.html"><code>SceneView</code></a></h2><p></br></p>
+<ul>
+<li>Unified 2D and 3D data model (the <a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-Map.html"><code>Map</code></a>), <a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-layers-Layer.html"><code>Layer</code></a>, <a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-renderers-Renderer.html"><code>Renderer</code></a> and <a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-symbols-Symbol.html"><code>Symbol</code></a></li>
+<li>Common <a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-views-View.html"><code>View</code></a> subclass between 2D and 3D</li>
+<li>Makes it easy (boring!) to transition to 3D</li>
+<li>However, to exploit 3D, you need to learn certain 3D concepts</li>
+</ul>
+</section>
+
+<section id="scene-view-classdef" class="slide" data-has-notes="false">
+<h2>Working with the <a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-views-SceneView.html"><code>SceneView</code></a></h2><div class="code-snippet">
+<pre><code class="lang-ts">class SceneView {
+  // Camera specifies the view
+  camera: Camera;
+
+  goTo(...);
+
+  // Settings that affect constraints (e.g. navigation constraints)
+  constraints: SceneViewConstraints;
+
+  // Padding on the view
+  padding: { top: number, right: number, bottom: number, left: number };
+
+  // Converting coordinate systems
+  toScreen(mapPoint: Point): ScreenPoint;
+  toMap(screenPoint: ScreenPoint): Point;
+}</code></pre>
+</div>
+</section>
+
+<section id="scene-view-camera" class="slide" data-has-notes="false">
+<h2>Working with the <a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-views-SceneView.html"><code>SceneView</code></a> &mdash; <a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-Camera.html"><code>Camera</code></a></h2><ul>
+<li>Primary specification of the view is the <a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-Camera.html"><code>Camera</code></a></li>
+</ul>
+<div class="code-snippet">
+<pre><code class="lang-ts">class Camera {
+  // The position of the camera eye in 3D space (x, y + z elevation)
+  position: Point;
+
+  // The heading angle (towards north in degrees, [0, 360]°)
+  heading: number;
+
+  // The tilt angle ([0, 180]°, with 0° straight down, 90° horizontal)
+  tilt: number;
+}</code></pre>
+</div>
+</section>
+
+<section id="scene-view-camera-demo" class="slide" data-has-notes="false">
+<h2>Working with the <a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-views-SceneView.html"><code>SceneView</code></a> &mdash; <a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-Camera.html"><code>Camera</code></a></h2><div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<button class="play" id="scene-view-camera-button01"></button>
+<pre><code class="lang-ts">const camera = view.camera.clone();
+
+// Increment the heading of the camera by 5 degrees
+camera.heading += 5;
+
+// Set the modified camera on the view
+view.camera = camera;</code></pre>
+</div>
+
+
+<p>  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/camera-demo.html" ></iframe>
+  </div>
+</div></p>
+</section>
+
+<section id="scene-view-go-to" class="slide" data-has-notes="false">
+<h2>Working with the <a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-views-SceneView.html"><code>SceneView</code></a> &mdash; <code>goTo</code></h2><div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<button class="play" id="scene-view-go-to-button01"></button>
+<pre><code class="lang-ts">const h = view.camera.heading;
+
+// Set the heading of the view to
+// the closest multiple of 30 degrees
+const heading = Math.floor(h / 30) * 30 + 30;
+
+// go to heading preserves view.center
+view.goTo({
+  heading: heading
+});</code></pre>
+</div>
+
+<div class="code-snippet">
+<strong>Animation options:</strong>
+
+<button class="play" id="scene-view-go-to-button02"></button>
+<pre><code class="lang-ts">const h = view.camera.heading;
+
+// Set the heading of the view to
+// the closest multiple of 120 degrees
+const heading = Math.floor(h / 120) * 120 + 120;
+
+const target = {
+  heading: heading
+};
+
+const options = {
+  easing: &quot;out-cubic&quot;,
+  speedFactor: 0.2
+};
+
+view.goTo(target, options);</code></pre>
+</div>
+
+<p>  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/go-to-demo.html" ></iframe>
+  </div>
+</div></p>
+</section>
+
+<section id="scene-view-padding" class="slide" data-has-notes="false">
+<h2>Working with the <a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-views-SceneView.html"><code>SceneView</code></a> &mdash; <a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-views-SceneView.html#padding"><code>padding</code></a></h2><div class="two-columns">
+  <div class="left-column">
+
+<ul>
+<li>Can be used to focus on a part of the view</li>
+<li>Primarily affects ui and navigation</li>
+</ul>
+
+<div class="code-snippet">
+
+<button class="play" id="scene-view-padding-button01"></button>
+<pre><code class="lang-ts">// Set the padding to account
+// for the space taken up by the sidebar and header
+view.padding = {
+  top: 50,
+  left: 250
+};</code></pre>
+</div>
+
+<p>  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/padding-demo.html" ></iframe>
+  </div>
+</div></p>
+</section>
+
+<section id="scene-view-to-map-to-screen" class="slide" data-has-notes="false">
+<h2>Working with the <a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-views-SceneView.html"><code>SceneView</code></a> &mdash; <a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-views-SceneView.html#toMap"><code>toMap</code></a>/<a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-views-SceneView.html#toScreen"><code>toScreen</code></a>/<a href="https://developers.arcgis.com/javascript/beta/api-reference/esri-views-SceneView.html#hitTest"><code>hitTest</code></a></h2><div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<button class="play" id="scene-view-to-map-to-screen-button01"></button>
+<pre><code class="lang-js">view = new SceneView({
+  map: new Map({
+    basemap: &quot;satellite&quot;
+  })
+});
+
+for (var x = 1; x &lt;= 2; x++) {
+  for (var y = 1; y &lt;= 2; y++) {
+    var px = x &lowast; (view.width / 3);
+    var py = y &lowast; (view.height / 3);
+
+    view.graphics.add(new Graphic({
+      geometry: view.toMap(px, py),
+      symbol: symbol,
+      attributes: { x: x, y: y }
+    }));
+  }
+}</code></pre>
+</div>
+
+<div class="code-snippet">
+<pre><code class="lang-js">view.on(&quot;pointer-move&quot;, event =&gt; {
+  view.hitTest({ x: event.x, y: event.y })
+    .then(result =&gt; {
+      var graphic = result.results[0] &amp;&amp;
+          result.results[0].graphic;
+
+      var attrs = graphic &amp;&amp; graphic.attributes;
+
+      if (attrs) {
+        logDiv.textContent = `${attrs.x}/${attrs.y}`;
+      }
+    });
+});</code></pre>
+</div>
+
+<p>  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/to-map-to-screen-demo.html" ></iframe>
+  </div>
+</div></p>
+</section>
+
+<section id="webscene" class="slide" data-background="images/section.png" data-has-notes="false">
+<h1 class="esri-centered-title"><a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-WebScene.html"><code>WebScene</code></a></h1>
+</section>
+
+<section id="webscene-intro" class="slide" data-has-notes="false">
+<h2><a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-WebScene.html"><code>WebScene</code></a></h2><p><br/></p>
+<ul>
+<li>Defines the content and style of a 3D Scene</li>
+<li>Serialized as JSON and stored in Portal/Online</li>
+</ul>
+</section>
+
+<section id="webscene-json" class="slide" data-has-notes="false">
+<h2><a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-WebScene.html"><code>WebScene</code></a> &mdash; Specification</h2><p><br/></p>
+<ul>
+<li>JSON spec similar to WebMap</li>
+<li>Layers, basemap, slides, initial state (position and light)</li>
+<li>Metadata: scene type, spatial reference, version...</li>
+<li><a href="https://developers.arcgis.com/web-scene-specification/">https://developers.arcgis.com/web-scene-specification/</a></li>
+</ul>
+</section>
+
+<section id="webscene-api" class="slide" data-has-notes="false">
+<h2><a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-WebScene.html"><code>WebScene</code></a> &mdash; API</h2><p><br/></p>
+<ul>
+<li>Supported by <a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-views-SceneView.html"><code>SceneView</code></a></li>
+<li>Loadable from <a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-portal-Portal.html"><code>Portal</code></a></li>
+</ul>
+<div class="code-snippet">
+<pre><code class="lang-ts">class WebScene extends Map {
+  presentation: {
+    slides: Collection&lt;Slide&gt;;
+  };
+
+  initialViewProperties: {
+    viewpoint: Viewpoint;
+    environment: Environment;
+    spatialReference: SpatialReference;
+    viewingMode: &quot;global&quot; | &quot;local&quot;;
+  };
+
+  portalItem: PortalItem;
+
+  clippingArea: Extent;
+  clippingEnabled: boolean;
+}</code></pre>
+</div>
+</section>
+
+<section id="webscene-platform" class="slide" data-has-notes="false">
+<h2><a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-WebScene.html"><code>WebScene</code></a> &mdash; Platform</h2><p><br/></p>
+<ul>
+<li>SceneViewer &amp; Pro</li>
+<li>Templates</li>
+<li>Web AppBuilder</li>
+<li>Story Maps</li>
+<li>API and SDKs</li>
+</ul>
+</section>
+
+<section id="webscene-read" class="slide" data-has-notes="false">
+<h2><a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-WebScene.html"><code>WebScene</code></a> &mdash; Reading</h2><div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<!--<button class="play" id="web-scene-reading-button01"></button>-->
+<pre><code class="lang-ts">view = new SceneView({
+  container: &quot;viewDiv&quot;,
+
+  map: new WebScene({
+    portalItem: {
+      id: &quot;3a9976baef9240ab8645ee25c7e9c096&quot;
+    }
+  })
+});
+
+var layerList = new LayerList({
+  view: view,
+  container: document.createElement(&quot;div&quot;)
+});
+
+var layerListExpand = new Expand({
+  view: view,
+  content: layerList.domNode,
+  expandIconClass: &quot;esri-icon-visible&quot;,
+  expanded: true
+});
+
+view.ui.add(layerListExpand, &quot;top-right&quot;);</code></pre>
+</div>
+<div class="code-snippet">
+<!--<button class="play" id="web-scene-reading-button01"></button>-->
+<pre><code class="lang-ts">view = new SceneView({
+slideDiv.addEventListener(&quot;click&quot;, () =&gt; {
+  slide.applyTo(view);
+});</code></pre>
+</div>
+
+
+<p>  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/web-scene-reading.html" ></iframe>
+  </div>
+</div></p>
+</section>
+
+<section id="webscene-save" class="slide" data-has-notes="false">
+<h2><a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-WebScene.html"><code>WebScene</code></a> &mdash; Saving</h2><div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<button class="play" id="web-scene-saving-button01"></button>
+<pre><code class="lang-ts">const scene = view.map;
+
+const layer = scene.layers.find(layer =&gt; {
+  return layer.title === &quot;Sun Exposure at 10:45&quot;;
+});
+
+scene.remove(layer);
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="web-scene-saving-button02"></button>
+<pre><code class="lang-ts">const scene = view.map;
+const presentation = scene.presentation;
+
+Slide.createFrom(view).then(slide =&gt; {
+  slide.title = { text: &quot;Created slide&quot; };
+  presentation.slides.insert(slide, 0);
+});
+
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="web-scene-saving-button03"></button>
+<pre><code class="lang-ts">scene.updateFrom(view)
+  .then(() =&gt; {
+    return scene.saveAs({
+      title: scene.title + &quot; Demo Copy&quot;,
+      portal: portal
+    });
+  })
+  .then(item =&gt; {
+    const itemPageUrl = portal.url +
+        &quot;/home/item.html?id=&quot; + item.id;
+
+    window.open(itemPageUrl, &quot;_blank&quot;);
+  });
+</code></pre>
+</div>
+
+<p>  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/web-scene-save.html" ></iframe>
+  </div>
+</div></p>
+</section>
+
+<section id="webscene-viewingmode" class="slide" data-has-notes="false">
+<h2><a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-WebScene.html"><code>WebScene</code></a> &mdash; viewingMode</h2><p><br/></p>
+<table>
+<thead>
+<tr>
+<th>Global</th>
+<th>Local</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>geographic, global extent, spherical</td>
+<td>projected, local extent, planar</td>
+</tr>
+<tr>
+<td><a href="https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=visualization-multivariate-3d" target="_blank"><img src="images/global.png"/></a></td>
+<td><a href="https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=scene-local" target="_blank"><img src="images/local.png"/></a></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section id="webscene-basemap-ground" class="slide" data-has-notes="false">
+<h2><a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-WebScene.html"><code>WebScene</code></a> &mdash; basemap and ground</h2><ul>
+<li><p>Basemap</p>
+<ul>
+<li>same as 2D basemap</li>
+</ul>
+</li>
+<li><p>Ground: defines the ground surface of the scene</p>
+<ul>
+<li>elevation layers</li>
+<li>surface properties (coming later)</li>
+<li>default world elevation layer</li>
+</ul>
+</li>
+</ul>
+</section>
+
+<section id="layer-types" class="slide" data-background="images/section.png" data-has-notes="false">
+<h1 class="esri-centered-title">Layer Types</h1>
+</section>
+
+<section id="feature-layers-intro" class="slide" data-has-notes="false">
+<h2>Feature Layers</h2>
+
+<p></br></p>
+<ul>
+<li>As you know them from 2D</li>
+<li>Elevation Info<ul>
+<li>mode: <code>on-the-ground</code>, <code>relative-to-ground</code>, <code>absolute-height</code></li>
+</ul>
+</li>
+</ul>
+</section>
+
+<section id="feature-layers-demo" class="slide" data-has-notes="false">
+<h2>Feature Layers and Elevation Info</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">// all the typical initialization
+var map = new Map(...);
+var view = new SceneView(...);
+
+// Create FeatureLayer, set the elevation mode
+// and add to the map
+var layer = new FeatureLayer({
+  url: "https://services.arcgis.com/.../USA_Major_Cities/...",
+  definitionExpression: "POP2007 > 50000",
+  elevationInfo: {
+    mode: "relative-to-ground",
+    offset: 10000
+  }
+});
+map.add(layer);
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<pre><code class="lang-js">// update elevation mode and offset
+layer.elevationInfo = {
+  mode: "relative-to-ground",
+  offset: 100 // meters
+};
+</code></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/feature-layers-elevation-mode.html" ></iframe>
+  </div>
+</div>
+</section>
+
+<section id="feature-editing-demo" class="slide" data-has-notes="false">
+<h2>Feature Editing</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">// all the typical initialization
+var map = new Map(...);
+var view = new SceneView(...);
+
+//add an editable featurelayer from portal
+Layer.fromPortalItem({
+  portalItem: {
+    id: "511b97fc0d364367b127f8ba5c89ad13"
+  }
+}).then((featureLayer) => { map.add(featureLayer); })
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="feature-editing-button02"></button>
+<pre><code class="lang-js">// move camera
+var point = new Point({
+  latitude: 33.82595255365376,
+  longitude: -116.5380549055525
+});
+
+view.goTo(point);
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="feature-editing-button01"></button>
+<pre><code class="lang-js">// add feature from code
+var graphic = new Graphic({
+  geometry: point,
+  attributes: {
+    "Incident_Desc": "Devsummit!",
+    "Incident_Address": "hello@world.com"
+  }
+});
+
+featureLayer.applyEdits({
+  addFeatures: [graphic],
+});
+</code></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/feature-editing.html" ></iframe>
+  </div>
+</div>
+
+
+<aside class="notes">
+- new in 4.3
+- api functionality is here
+- interaction tools and widgets will follow in future releases
+</aside>
+</section>
+
+<section id="elevation-layers" class="slide" data-has-notes="false">
+<h2>Elevation Layers</h2>
+
+<p></br></p>
+<ul>
+<li><p>Elevation services</p>
+<ul>
+<li>Tiled image service</li>
+<li>LERC format (Limited Error Raster Compression)</li>
+</ul>
+</li>
+<li><p>Layer type: <a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-ElevationLayer.html">esri/layers/ElevationLayer</a></p>
+<ul>
+<li><code>elevationLayer.queryElevation(...)</code></li>
+</ul>
+</li>
+<li><p>Added to <code>map.ground.layers</code></p>
+<ul>
+<li>Multiple elevation layers overlay just as map layers do</li>
+<li><code>map.ground.queryElevation(...)</code></li>
+</ul>
+</li>
+</ul>
+</section>
+
+<section id="elevation-layers-demo" class="slide" data-has-notes="false">
+<h2>Elevation Layers</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">var map = new Map({
+  basemap: "satellite",
+  ground: "world-elevation" // use default world elevation layer
+});
+
+// load an additional elevation layer depicting the
+// elevation difference after the 2014 Oso landslide
+var elevationLayer = new ElevationLayer({
+  url: "https://.../OsoLandslide_After_3DTerrain/ImageServer",
+  visible: false
+});
+
+map.ground.layers.add(elevationLayer);
+
+var view = new SceneView(...);
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="elevation-layers-button01"></button>
+<pre><code class="lang-js">// toggle the elevation layer visiblity
+elevationLayer.visible = !elevationLayer.visible
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<pre><code class="lang-js">// query elevation at the clicked map point
+view.on("click", function(event) {
+  var position = event.mapPoint;
+  var query = elevationLayer.queryElevation(position);
+  query.then((result) => {
+    console.log(result.geometry.z)
+  });
+});
+</code></pre>
+</div>
+<div class="code-output">
+  <pre id="elevation-layer-output01"></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/elevation-layers.html" ></iframe>
+  </div>
+</div>
+</section>
+
+<section id="scene-layers-intro" class="slide" data-has-notes="false">
+<h2>Scene Layers</h2>
+
+<p></br></p>
+<ul>
+<li>3D equivalent of the Feature Layer</li>
+<li>Supports<ul>
+<li>points</li>
+<li>meshes</li>
+</ul>
+</li>
+</ul>
+</section>
+
+<section id="point-scene-layer-demo" class="slide" data-has-notes="false">
+<h2>Point Scene Layer</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">// all the typical initialization
+var map = new Map(...);
+var view = new SceneView(...);
+
+// Create SceneLayer and add to the map
+var sceneLayer = new SceneLayer({
+   url: "http://tiles.arcgis.com/.../Airports_PointSceneLayer/...",
+});
+
+map.add(sceneLayer);
+</code></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/scene-layer-points.html" ></iframe>
+  </div>
+</div>
+</section>
+
+<section id="mesh-scene-layer-demo" class="slide" data-has-notes="false">
+<h2>Mesh Scene Layer</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">// all the typical initialization
+var map = new Map(...);
+var view = new SceneView(...);
+
+// Create SceneLayer and add to the map
+var sceneLayer = new SceneLayer({
+  url: "https://tiles.arcgis.com/tiles/.../NYCatt/SceneServer",
+});
+
+map.add(sceneLayer);
+</code></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/scene-layer-mesh.html" ></iframe>
+  </div>
+</div>
+</section>
+
+<section id="scene-layer-filtering-demo" class="slide" data-has-notes="false">
+<h2>Scene Layer Filtering</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">// all the typical initialization
+var map = new Map(...);
+var view = new SceneView(...);
+
+// Create SceneLayer and add to the map
+var sceneLayer = new SceneLayer({
+  url: "https://tiles.arcgis.com/tiles/.../NYCatt/SceneServer",
+});
+
+map.add(sceneLayer);
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="mesh-filtering-button01"></button>
+<pre><code class="lang-js">// only show buildings constructed before 1900
+sceneLayer.definitionExpression =
+  "CNSTRCT_YR < 1900 AND CNSTRCT_YR > 0";
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="mesh-filtering-button03"></button>
+<pre><code class="lang-js">// reset filter
+sceneLayer.definitionExpression = null;
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<button class="play" id="mesh-filtering-button02"></button>
+<pre><code class="lang-js">// filter out tall buildings
+sceneLayer.definitionExpression =
+  "HEIGHTROOF < 100 AND HEIGHTROOF > 0";
+</code></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/scene-layer-mesh.html" ></iframe>
+  </div>
+</div>
+
+
+<aside class="notes">
+- filtering, same defintionExpression as on the feature layer </br>
+- client side filtering </br>
+- SQL </br>
+</aside>
+</section>
+
+<section id="scene-layer-query-demo" class="slide" data-has-notes="false">
+<h2>Scene Layer Query</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<button class="play" id="mesh-query-button01"></button>
+<pre><code class="lang-js">// the scene layer we are working with
+// filtering a specific building
+officeLayer.definitionExpression = "BUILDING = 'Q'"
+
+// create the query on the officeLayer
+// based on its definitionExpression
+var query = officeLayer.createQuery();
+query.outFields = ["SPACETYPE"];
+
+// query the layer
+officeLayer.queryFeatures(query).then((results) => {
+  var typesCounter = {};
+  var othersCounter = 0;
+
+  // count the types of all the features
+  // returned from the query
+  results.features.forEach((feature) => {
+    var spaceType = feature.attributes.SPACETYPE;
+
+    if (typesCounter[spaceType]) {
+      typesCounter[spaceType]++;
+    } else {
+      typesCounter[spaceType] = 1;
+    }
+  });
+
+  // set the results in the legend
+  ...
+});
+</code></pre>
+</div>
+
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/scene-layer-query.html" ></iframe>
+  </div>
+</div>
+
+
+<aside class="notes">
+- filtering, same defintionExpression as on the feature layer </br>
+- client side filtering </br>
+- SQL </br>
+</aside>
+</section>
+
+<section id="integrated-mesh-demo" class="slide" data-has-notes="false">
+<h2>Integrated Mesh Layer</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">// create the integrated mesh layer
+var layer = new IntegratedMeshLayer({
+  url: "http://tiles.arcgis.com/tiles/.../Oxford_Scene/..."
+});
+
+// create a map with the layer added
+var map = new Map({
+  basemap: "streets",
+  layers: [layer],
+  ground: "world-elevation"
+});
+
+// finally, create a view with a good
+// perspective on the integrated mesh
+var view = new SceneView({
+  container: "viewDiv",
+  map: map,
+  camera: {
+    position: [-1.2567, 51.7517, 123.6058],
+    heading: 41.4698,
+    tilt: 75.9609
+  }
+});
+</code></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/integrated-mesh.html" ></iframe>
+  </div>
+</div>
+
+
+<aside class="notes">
+- one single textured mesh and level of detail </br>
+- data source: drone to map and vricon data
+</aside>
+</section>
+
+<section id="point-cloud-demo" class="slide" data-has-notes="false">
+<h2>Point Cloud Layer</h2>
+
+<div class="two-columns">
+  <div class="left-column">
+
+<div class="code-snippet">
+<pre><code class="lang-js">// all the typical initialization
+var map = new Map(...);
+var view = new SceneView(...);
+
+// create Point Cloud Layer
+var pcLayer = new PointCloudLayer({
+  url: "http://tiles.arcgis.com/.../BARNEGAT_BAY_LiDAR_UTM/..."
+});
+
+map.add(pcLayer);
+</code></pre>
+</div>
+
+<div class="code-snippet">
+<pre><code class="lang-js">// update the render settings
+function updateRenderer(pointSize, density) {
+  pcLayer.renderer = new PointCloudRGBRenderer({
+    field: "RGB",
+    pointSizeAlgorithm: {
+      type: "fixed-size",
+      useRealWorldSymbolSizes: false,
+      size: pSize
+    },
+    pointsPerInch: density
+  })
+}
+</code></pre>
+</div>
+
+  </div>
+  <div class="right-column">
+    <iframe id="demo-time-date" data-src="../examples/pointcloud-size-and-density.html" ></iframe>
+  </div>
+</div>
+
+<aside class="notes">
+- really large data </br>
+- captures fine detail </br>
+- level of detail </br>
+- example, usecase: for classification </br>
+</aside>
+</section>
+
+<section id="more-layers" class="slide" data-has-notes="false">
+<h2>More Layers</h2>
+
+<ul>
+<li><p>TileLayer/VectorTileLayer</p>
+<ul>
+<li>for ArcGIS cached tile services</li>
+</ul>
+</li>
+<li><p>WebTileLayer</p>
+<ul>
+<li>Non-ArcGIS Server map tiles, using url template</li>
+</ul>
+</li>
+<li><p>MapImageLayer (dynamic layer)</p>
+<ul>
+<li>ArcGIS map services (export image)</li>
+</ul>
+</li>
+</ul>
+</section>
+
+<section id="symbology" class="slide" data-background="images/section.png" data-has-notes="false">
+<h1 class="esri-centered-title">Visualization and symbology</h1>
+</section>
+
+<section id="symbology-intro" class="slide" data-has-notes="false">
+<h1>Visualization and symbology</h1><ul>
+<li>Visualization is data-driven<ul>
+<li>Thematic (population, donations, earnings, votes, etc.)<ul>
+<li><a href="http://ekenes.github.io/esri-js-samples/4/3d-visualization/hurricane-andrew.html">Hurricane Andrew</a></li>
+<li><a href="http://ekenes.github.io/esri-js-samples/4/3d-visualization/axis-size-politics.html">Political leaning</a></li>
+</ul>
+</li>
+<li>Location-based (Where is it? What does it look like?)<ul>
+<li><a href="http://ekenes.github.io/esri-js-samples/4/3d-visualization/rw-buildings-extrusion.html">Extruded buildings</a></li>
+<li><a href="http://ekenes.github.io/esri-js-samples/4/3d-visualization/rw-trees.html">Trees</a></li>
+<li><a href="https://developers.arcgis.com/javascript/latest/sample-code/scene-local/live/index.html">Subsurface earthquakes</a></li>
+<li><a href="https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=layers-scenelayer-vv-color">SceneLayer meshes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+
+<section id="symbology-symbols" class="slide" data-has-notes="false">
+<h1>Visualization and symbology &mdash; Symbols</h1><ul>
+<li>All symbols act as containers for symbol layers</li>
+<li>Symbol layers define the visualization</li>
+<li>A 3D symbol must have at least one symbol layer</li>
+</ul>
+<p><img src="images/visualization.png" alt="visualization"></p>
+</section>
+
+<section id="symbology-symbol-layers" class="slide" data-has-notes="false">
+<h1>Visualization and symbology &mdash; Symbol layers</h1><p>(flat) IconSymbol3DLayer - LineSymbol3DLayer - FillSymbol3DLayer</p>
+<p><img src='images/isl.png' width='310'/>
+<img src='images/lsl.png' width='310'/>
+<img src='images/fsl.png' width='310'/></p>
+<p>(volumetric) ObjectSymbol3DLayer - PathSymbol3DLayer - ExtrudeSymbol3DLayer</p>
+<p><img src='images/osl.png' width='310'/>
+<img src='images/psl.png' width='310'/>
+<img src='images/esl.png' width='310'/></p>
+</section>
+
+<section id="symbology-websymbol" class="slide" data-has-notes="false">
+<h1>Visualization and symbology &mdash; WebStyleSymbol</h1><p><img width="50%" src="images/webstylesymbol.png"/></p>
+<div class="code-snippet">
+<pre><code>const webStyleSymbol = new WebStyleSymbol({
+  name: &quot;Traffic_Barrier_1&quot;,
+  styleName: &quot;EsriRealisticStreetSceneStyle&quot;
+});
+</code></pre>
+</div>
+
+
+<p><a href="https://developers.arcgis.com/javascript/latest/sample-code/playground/live/index.html#/config=symbols/3d/WebStyleSymbol.json">https://developers.arcgis.com/javascript/latest/sample-code/playground/live/index.html#/config=symbols/3d/WebStyleSymbol.json</a></p>
+</section>
+
+<section id="end" class="slide" data-has-notes="false">
+<img class="esri-logo-center" src="images/esri_logo_01.png">
+</section></div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+    // Full list of configuration options available at:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
+
+      transition: Reveal.getQueryHash().transition || 'slide', // none/fade/slide/convex/concave/zoom
+
+      // Optional reveal.js plugins
+      dependencies: [
+        //{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        //{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+        { src: 'plugin/zoom-js/zoom.js', async: true },
+        { src: 'plugin/notes/notes.js', async: true }
+      ]
+    });
+    </script>
+
+    <script src="js/dynamic-theme.js"></script><script src="js/custom.js"></script>
+
+  </body>
+</html>
