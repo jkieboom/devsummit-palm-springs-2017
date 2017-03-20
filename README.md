@@ -1,6 +1,6 @@
 # Controlling the Camera & 3D Navigation in your ArcGIS API for JavaScript app
 
-[Preview presentation](https://jkieboom.github.io/presentations-devsummit-2017/controlling-camera-3d-navigation/)
+[Preview presentation](https://jkieboom.github.io/devsummit-palm-springs-2017/controlling-camera-3d-navigation/)
 
 Presenters: Jesse van den Kieboom, Esri
 
@@ -8,7 +8,7 @@ Learn about how to navigate around the globe in 3D with the ArcGIS API 4.x for J
 
 # Extending the ArcGIS API for JavaScript's 3D engine
 
-[Preview presentation](https://jkieboom.github.io/presentations-devsummit-2017/extending-3d-engine/)
+[Preview presentation](https://jkieboom.github.io/devsummit-palm-springs-2017/extending-3d-engine/)
 
 Presenters: Jesse van den Kieboom, Esri
 
@@ -16,7 +16,7 @@ Are you an expert 3D developer? Do you know about matrix projections and webgl? 
 
 # Working in 3D in the ArcGIS API for JavaScript
 
-[Preview presentation](https://jkieboom.github.io/presentations-devsummit-2017/working-in-3d/)
+[Preview presentation](https://jkieboom.github.io/devsummit-palm-springs-2017/working-in-3d/)
 
 Presenters: Adrian Blumer, Jesse van den Kieboom, Esri
 
