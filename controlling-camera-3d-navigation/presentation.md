@@ -10,7 +10,8 @@ Jesse van den Kieboom, ESRI R&amp;D Center Zürich
 
 ## Important Notice
 
-These slides contain dynamic code snippets that can be viewed online. See https://jkieboom.github.io/presentations-devsummit-2017/controlling-camera-3d-navigation.
+These slides contain dynamic code snippets that can be viewed online. See 
+https://jkieboom.github.io/devsummit-palm-springs-2017/controlling-camera-3d-navigation.
 
 ---
 
